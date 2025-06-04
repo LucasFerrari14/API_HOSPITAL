@@ -12,8 +12,14 @@ import java.util.List;
 @Repository
 public interface BedRepository extends JpaRepository<BedModel, Long> {
     @Query(nativeQuery = true,
-            value = "SELECT B.* FROM CEH_LEITO B " +
-                    "WHERE B.DE_SPECIALTY = :cdSpecialty  AND" +
-                    "B.CD_PATIENT IS NULL")
-    List<BedModel> findFreeBedBySpecialty(@Param("cdSpecialty") Integer cdSpecialty);
+            value = "SELECT L.* FROM CEH_LEITO L " +
+                    "JOIN CEH_ROOM R ON L.CD_ROOM = R.CD_ROOM " +
+                    "JOIN CEH_HWING W ON R.CD_HWING = W.CD_HWING " +
+                    "WHERE L.DE_STATUS = 0  AND W.DE_SPECIALTY = :cdSpecialty LIMIT 1")
+    BedModel findFreeBedBySpecialty(@Param("cdSpecialty") Integer cdSpecialty);
+
+    @Query(nativeQuery = true,
+            value = "SELECT B.* FROM CEH_LEITO B WHERE " +
+                    "B.CD_PATIENT = :cdPatient AND ")
+    BedModel findByiInpatient(@Param("cdPatient") Long cdPatient);
 }

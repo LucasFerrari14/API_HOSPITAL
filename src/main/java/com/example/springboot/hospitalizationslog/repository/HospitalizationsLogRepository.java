@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface HospitalizationsLogRepository extends JpaRepository<HospitalizationsLogModel, Long> {
 
     @Query(nativeQuery = true,
-        value = "SELECT H.* FROM CEH_HOSPITAL H WHERE CD_HOSPITAL = :id")
-    HospitalizationsLogModel buscarPorID(@Param("id") Long id);
+        value = "SELECT H.* FROM CEH_HOSPITAL H WHERE " +
+                "H.CD_PATIENT = :cdPatient AND " +
+                "H.DT_DISCHARGE IS NULL")
+    HospitalizationsLogModel findHospitalizedByPatient(@Param("cdPatient") Long cdPatient);
 
 }
