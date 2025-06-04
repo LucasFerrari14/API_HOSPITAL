@@ -1,5 +1,7 @@
 package com.example.springboot.hospitalizationslog.model;
 
+import com.example.springboot.enumerated.specialty.Specialty;
+import com.example.springboot.enumerated.specialty.SpecialtyConverter;
 import com.example.springboot.hwing.model.HWingModel;
 import com.example.springboot.patient.model.PatientModel;
 import jakarta.persistence.*;
@@ -20,10 +22,12 @@ public class HospitalizationsLogModel implements Serializable {
     @Column(name = "CD_HOSPITALIZATIONSLOG", updatable = false, nullable = false)
     private Long cdHospitalizationsLog;
 
-    @Column(name = "CD_HWING")
+    @ManyToOne()
+    @JoinColumn(name = "CD_HWING")
     private HWingModel cdHWing;
 
-    @Column(name = "CD_PATIENTE")
+    @ManyToOne()
+    @JoinColumn(name = "CD_PATIENTE")
     private PatientModel cdPatient;
 
     @Column(name = "DT_HOSPITALIZATION")
@@ -32,5 +36,7 @@ public class HospitalizationsLogModel implements Serializable {
     @Column(name = "DT_DISCHARGE")
     private Date dtDischarge;
 
-
+    @Column(name = "DE_SPECIALTY")
+    @Convert(converter = SpecialtyConverter.class)
+    private Specialty deSpecialty;
 }

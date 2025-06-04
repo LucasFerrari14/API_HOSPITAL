@@ -21,7 +21,7 @@ public class BedModel implements Serializable {
     @Column(name = "CD_BED", updatable = false, nullable = false)
     private Long cdBed;
 
-    @Column(name = "DE_SPECIALTY")
+    @Column(name = "DE_STATUS")
     @Convert(converter = StatusConverter.class)
     private Status cdStatus;
 

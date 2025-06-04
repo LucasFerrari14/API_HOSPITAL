@@ -23,7 +23,7 @@ public class RoomModel implements Serializable {
     @Column(name = "DE_CODE", length = 10)
     private String deCodigo;
 
-    @Column(name = "DE_SPECIALTY")
+    @Column(name = "CD_STATUS")
     @Convert(converter = StatusConverter.class)
     private Status cdStatus;
 

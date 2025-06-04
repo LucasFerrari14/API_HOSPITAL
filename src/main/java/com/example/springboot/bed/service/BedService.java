@@ -54,7 +54,11 @@ public class BedService {
         bedRepository.delete(bed);
     }
 
-    public List<BedModel> findFreeBedBySpecialty(@NotNull Integer cdSpecialty) {
+    public BedModel findFreeBedBySpecialty(@NotNull Integer cdSpecialty) {
         return bedRepository.findFreeBedBySpecialty(cdSpecialty);
+    }
+
+    public BedModel findByiInpatient(@NotNull Long cdPacient) {
+        return bedRepository.findByiInpatient(cdPacient);
     }
 }

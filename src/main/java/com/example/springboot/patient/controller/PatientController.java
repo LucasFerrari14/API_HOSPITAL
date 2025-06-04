@@ -1,7 +1,14 @@
 package com.example.springboot.patient.controller;
 
 
+import com.example.springboot.bed.model.BedModel;
+import com.example.springboot.bed.service.BedService;
 import com.example.springboot.enumerated.specialty.Specialty;
+import com.example.springboot.enumerated.status.Status;
+import com.example.springboot.hospitalizationslog.DTO.HospitalizationsFinalDTO;
+import com.example.springboot.hospitalizationslog.DTO.HospitalizationsLogDTO;
+import com.example.springboot.hospitalizationslog.model.HospitalizationsLogModel;
+import com.example.springboot.hospitalizationslog.service.HospitalizationsLogService;
 import com.example.springboot.hwing.service.HWingService;
 import com.example.springboot.patient.DTO.PatientDTO;
 import com.example.springboot.patient.model.PatientModel;
@@ -13,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,7 +28,9 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
     @Autowired
-    private HWingService hWingService;
+    private BedService bedService;
+    @Autowired
+    private HospitalizationsLogService hospitalizationsLogService;
 
     @PostMapping("/patients")
     public ResponseEntity<PatientModel> savepatient(@RequestBody @Valid PatientDTO patientDTO) {
@@ -53,9 +63,33 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body("patient deletado com sucesso");
     }
 
-    @PostMapping("/patients/{cdSpecialty}")
-    public ResponseEntity<Object> hospitalizationPacient(@RequestBody @Valid PatientDTO patientDTO,
+    @PostMapping("/hospitalizations/{cdPatient}/{cdSpecialty}")
+    public ResponseEntity<Object> hospitalizationPacient(@PathVariable(value="cdPatient") Long cdPatient,
                                                          @PathVariable(value="cdSpecialty") int cdSpecialty) {
-        hWingService.findyWingbySpecialty(Specialty.fromcdSpecialty(cdSpecialty));
+        BedModel bed = bedService.findFreeBedBySpecialty(cdSpecialty);
+        if (bed == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existem leitos disponíveis");
+        }
+        bed.setCdPatient(patientService.findById(cdPatient));
+        bed.setCdStatus(Status.BUSY);
+        bedService.update(bed);
+
+        HospitalizationsFinalDTO hospitalizationsFinalDTO = new HospitalizationsFinalDTO(cdPatient, bed.getCdRoom().getCdHWing().getCdHWing(), bed.getCdRoom().getCdRoom(), bed.getCdBed());
+        HospitalizationsLogDTO hospitalizationsLogDTO = new HospitalizationsLogDTO(Specialty.fromcdSpecialty(cdSpecialty), cdPatient, bed.getCdRoom().getCdHWing().getCdHWing());
+
+        hospitalizationsLogService.save(hospitalizationsLogDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalizationsFinalDTO);
+    }
+
+    @PutMapping("/hospitalizations/{cdPatient}")
+    public ResponseEntity<Object>  releasePatient(@PathVariable(value="cdPatient") Long cdPatient) {
+        HospitalizationsLogModel hospitalization = hospitalizationsLogService.findHospitalizedByPatient(cdPatient);
+        hospitalization.setDtDischarge(new Date());
+
+        BedModel bed = bedService.findByiInpatient(cdPatient);
+        bed.setCdStatus(Status.CLEANING);
+        bedService.update(bed);
+
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalization);
     }
 }
