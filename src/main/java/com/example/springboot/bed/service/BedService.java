@@ -3,6 +3,10 @@ package com.example.springboot.bed.service;
 import com.example.springboot.bed.DTO.BedDTO;
 import com.example.springboot.bed.model.BedModel;
 import com.example.springboot.bed.repository.BedRepository;
+import com.example.springboot.enumerated.status.Status;
+import com.example.springboot.hwing.model.HWingModel;
+import com.example.springboot.patient.repository.PatientRepository;
+import com.example.springboot.room.repository.RoomRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -17,19 +21,29 @@ public class BedService {
 
     @Autowired
     private BedRepository bedRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private PatientRepository patientRepository;
 
     public BedModel findById(long id) {
-        return bedRepository.findById(id).orElseThrow(() -> new RuntimeException("Bed não encontrado"));
+        return bedRepository.findById(id).orElseThrow(() -> new RuntimeException("Leito não encontrado"));
     }
+
     public List<BedModel> listAll() {
         return bedRepository.findAll();
     }
 
     public BedModel save(@RequestBody @Valid BedDTO bedDTO) {
         BedModel bed = new BedModel();
-        BeanUtils.copyProperties(bedDTO, bed);
-        bedRepository.save(bed);
-        return bed;
+        bed.setDeCode(bedDTO.deCodigo());
+        bed.setCdStatus(Status.FREE);
+        bed.setCdRoom(roomRepository.findById(bedDTO.cdRoom()).orElseThrow(() -> new RuntimeException("Quarto não encontrado")));
+
+        if (bedDTO.cdPatient() != null) {
+            bed.setCdPatient(patientRepository.findById(bedDTO.cdPatient()).orElseThrow(() -> new RuntimeException("Paciente não encontrado")));
+        }
+        return bedRepository.save(bed);
     }
 
     public BedModel update(@NotNull BedModel bed) {
@@ -38,5 +52,9 @@ public class BedService {
 
     public void delete(@NotNull BedModel bed) {
         bedRepository.delete(bed);
+    }
+
+    public List<BedModel> findFreeBedBySpecialty(@NotNull Integer cdSpecialty) {
+        return bedRepository.findFreeBedBySpecialty(cdSpecialty);
     }
 }

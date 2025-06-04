@@ -22,9 +22,9 @@ public class RoomController {
     private RoomService roomService;
 
     @PostMapping("/rooms")
-    public ResponseEntity<RoomModel> saveRoom(@RequestBody @Valid RoomDTO roomDTO, @NotNull int nuBed) {
+    public ResponseEntity<RoomModel> saveRoom(@RequestBody @Valid RoomDTO roomDTO) {
         RoomModel room = roomService.save(roomDTO);
-        generateBed(nuBed, room);
+        generateBed(roomDTO.nuBed(), room);
         return ResponseEntity.status(HttpStatus.CREATED).body(room);
     }
 

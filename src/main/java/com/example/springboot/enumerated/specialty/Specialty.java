@@ -1,5 +1,6 @@
 package com.example.springboot.enumerated.specialty;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 @Getter
@@ -9,16 +10,16 @@ public enum Specialty {
     ORTOPEDIA(2, "ORTHOPEDICS"),
     PEDIATRIA(3, "PEDIATRICS");
 
-    private final int cdSpecialty;
+    private final Integer cdSpecialty;
     private final String deName;
 
-    Specialty(int cdSpecialty, String deName) {
+    Specialty(Integer cdSpecialty, String deName) {
         this.cdSpecialty = cdSpecialty;
         this.deName = deName;
     }
 
-    // Buscar por código
-    public static Specialty fromcdSpecialty(long cdSpecialty) {
+    @JsonCreator
+    public static Specialty fromcdSpecialty(Integer cdSpecialty) {
         for (Specialty esp : Specialty.values()) {
             if (esp.getCdSpecialty() == cdSpecialty) {
                 return esp;

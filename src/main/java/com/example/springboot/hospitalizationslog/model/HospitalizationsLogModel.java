@@ -1,5 +1,6 @@
 package com.example.springboot.hospitalizationslog.model;
 
+import com.example.springboot.hwing.model.HWingModel;
 import com.example.springboot.patient.model.PatientModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class HospitalizationsLogModel implements Serializable {
     private Long cdHospitalizationsLog;
 
     @Column(name = "CD_HWING")
-    private PatientModel cdHWing;
+    private HWingModel cdHWing;
 
     @Column(name = "CD_PATIENTE")
     private PatientModel cdPatient;

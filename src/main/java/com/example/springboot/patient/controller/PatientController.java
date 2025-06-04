@@ -1,6 +1,8 @@
 package com.example.springboot.patient.controller;
 
 
+import com.example.springboot.enumerated.specialty.Specialty;
+import com.example.springboot.hwing.service.HWingService;
 import com.example.springboot.patient.DTO.PatientDTO;
 import com.example.springboot.patient.model.PatientModel;
 import com.example.springboot.patient.service.PatientService;
@@ -17,6 +19,8 @@ import java.util.List;
 public class PatientController {
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private HWingService hWingService;
 
     @PostMapping("/patients")
     public ResponseEntity<PatientModel> savepatient(@RequestBody @Valid PatientDTO patientDTO) {
@@ -47,5 +51,11 @@ public class PatientController {
         PatientModel patient = patientService.findById(cdPatient);
         patientService.delete(patient);
         return ResponseEntity.status(HttpStatus.OK).body("patient deletado com sucesso");
+    }
+
+    @PostMapping("/patients/{cdSpecialty}")
+    public ResponseEntity<Object> hospitalizationPacient(@RequestBody @Valid PatientDTO patientDTO,
+                                                         @PathVariable(value="cdSpecialty") int cdSpecialty) {
+        hWingService.findyWingbySpecialty(Specialty.fromcdSpecialty(cdSpecialty));
     }
 }

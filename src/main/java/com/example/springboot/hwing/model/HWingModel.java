@@ -24,6 +24,7 @@ public class HWingModel implements Serializable {
     @Convert(converter = SpecialtyConverter.class)
     private Specialty deSpecialty;
 
-    @Column(name = "CD_HOSPITAL")
+    @ManyToOne()
+    @JoinColumn(name = "CD_HOSPITAL")
     private HospitalModel cdHospital;
 }

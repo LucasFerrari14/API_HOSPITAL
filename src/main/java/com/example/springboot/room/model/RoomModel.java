@@ -20,13 +20,14 @@ public class RoomModel implements Serializable {
     @Column(name = "CD_ROOM", updatable = false, nullable = false)
     private Long cdRoom;
 
-    @Column(name = "DE_CODIGO", length = 10)
+    @Column(name = "DE_CODE", length = 10)
     private String deCodigo;
 
     @Column(name = "DE_SPECIALTY")
     @Convert(converter = StatusConverter.class)
     private Status cdStatus;
 
-    @Column(name = "CD_HWING")
+    @ManyToOne()
+    @JoinColumn(name = "CD_HWING")
     private HWingModel cdHWing;
 }

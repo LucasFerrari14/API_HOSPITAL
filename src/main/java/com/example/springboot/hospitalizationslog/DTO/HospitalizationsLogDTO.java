@@ -1,6 +1,7 @@
 package com.example.springboot.hospitalizationslog.DTO;
 
-import jakarta.validation.constraints.NotBlank;
+import com.example.springboot.enumerated.specialty.Specialty;
+import jakarta.validation.constraints.NotNull;
 
-public record HospitalizationsLogDTO(@NotBlank Long cdHWing, @NotBlank Long cdPatient) {
+public record HospitalizationsLogDTO(@NotNull Specialty specialty, @NotNull Long cdPatient) {
 }
